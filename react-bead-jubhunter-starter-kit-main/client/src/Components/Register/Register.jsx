@@ -1,11 +1,34 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAddUserMutation } from "../../store/store";
 
 function Register() {
+  const [addUser] = useAddUserMutation();
   const [role, setRole] = useState("company");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [fullname, setFullname] = useState("");
+  const [experiences, setExperiences] = useState("");
 
   const handleInputChange = (e) => {
     setRole(e.target.value);
+  };
+
+  const handleAuth = (e) => {
+    e.preventDefault()
+    addUser({
+      data: {
+        email: email,
+        password: password,
+        fullname: fullname,
+        role: role,
+      },
+    }).then((result)=>{
+      console.log(result)
+    }).catch((error)=>{
+      console.log(error)
+    })
+    
   };
 
   return (
@@ -22,6 +45,7 @@ function Register() {
                 className="form-control"
                 id="inputEmail3"
                 placeholder="Email"
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
           </div>
@@ -35,6 +59,7 @@ function Register() {
                 className="form-control"
                 id="inputPassword3"
                 placeholder="Password"
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
           </div>
@@ -48,6 +73,7 @@ function Register() {
                 className="form-control"
                 id="inputFullname"
                 placeholder="Full name"
+                onChange={(e) => setFullname(e.target.value)}
               />
             </div>
           </div>
@@ -99,6 +125,7 @@ function Register() {
                   name="experiences"
                   id="experiences"
                   rows="6"
+                  onChange={(e) => setExperiences(e.target.value)}
                 ></textarea>
               </div>
             </>
@@ -108,8 +135,12 @@ function Register() {
 
           <div className="form-group row">
             <div className="col-sm-10">
-              <button type="submit" className="btn btn-primary">
-                Sign in
+              <button
+                type="submit"
+                className="btn btn-primary"
+                onClick={(e)=>handleAuth(e)}
+              >
+                Sign up
               </button>
             </div>
           </div>
