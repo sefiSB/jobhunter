@@ -1,4 +1,5 @@
 import React from "react";
+import JobList from "../JobList/JobList";
 
 function Home() {
   return (
@@ -8,45 +9,22 @@ function Home() {
       </div>
 
       <div className="container">
-        <form class="search-filter-row">
+        <form className="search-filter-row">
           <input
             type="text"
             placeholder="Írd be a keresendő kifejezést"
-            class="input-field"
+            className="input-field"
           />
-          <button type="button" class="search-button">
+          <button type="button" className="search-button">
             Keresés
           </button>
-          <button type="button" class="filter-button">
+          <button type="button" className="filter-button">
             Szűrés
           </button>
         </form>
       </div>
 
-      <div className="joblist">
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th scope="col">Állás</th>
-              <th scope="col">Fizetés</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                <tr>aa</tr>
-                <tr style={{ color: "lightgrey" }}>bb</tr>
-              </td>
-              <td>
-                <td>
-                  <tr>aa</tr>
-                  <tr style={{ color: "lightgrey" }}>bb</tr>
-                </td>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <JobList/>
     </>
   );
 }

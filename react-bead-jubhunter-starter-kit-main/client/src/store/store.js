@@ -3,14 +3,21 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const initialState = {
   user: null,
-  isEmployer: null,
-  authenticate: null,
+  role: null,
+  authenticate: {accessToken:null},
+  loggedIn: false,
 };
 
 const BASE_URL = "http://localhost:3030";
 const jobhunterApiSlice = createApi({
   reducerPath: "jobhunterApi",
-  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: BASE_URL,
+    prepareHeaders: (header, { getState }) => {
+      header.set("Authorization", getState().states.authenticate.accessToken);
+      return header;
+    },
+  }),
   tagTypes: ["users", "experiences", "jobs", "applicants"],
   endpoints: (builder) => ({
     getUser: builder.query({
@@ -20,11 +27,15 @@ const jobhunterApiSlice = createApi({
       query: () => `jobs`,
       providesTags: ["job"],
     }),
-    applicant4jobs: builder.query({
+    getJob: builder.query({
+      query: ({id}) => `jobs/${id}`,
+      providesTags: ["job"],
+    }),
+    applicant4Jobs: builder.query({
       query: ({ id }) => `applicants?jobId=${id}`,
       providesTags: [""],
     }),
-    jobs4applicants: builder.query({
+    jobs4Applicants: builder.query({
       query: ({ id }) => `applicants?userId=${id}`,
       providesTags: [""],
     }),
@@ -60,15 +71,18 @@ const jobhunterApiSlice = createApi({
       invalidatesTags: [""],
     }),
     authenticate: builder.mutation({
-      query: ({ data }) => ({
-        url: "authentication",
-        method: "POST",
-        body: {
-          email: data.email,
-          password: data.password,
-          strategy: data.strategy,
-        },
-      }),
+      query: ({ data }) => {
+        console.log(data);
+        return {
+          url: "authentication",
+          method: "POST",
+          body: {
+            email: data.email,
+            password: data.password,
+            strategy: data.strategy,
+          },
+        };
+      },
       invalidatesTags: [""],
     }),
     addUser: builder.mutation({
@@ -157,14 +171,19 @@ const stateSlice = createSlice({
     changeUser(state, action) {
       state.user = action.payload;
     },
-    changeIsEmployer(state, action) {
-      state.isEmployer = action.payload;
+    changeRole(state, action) {
+      state.role = action.payload;
     },
     changeAuth(state, action) {
       state.authenticate = action.payload;
     },
+    changeLoggedIn(state) {
+      state.loggedIn=!state.loggedIn
+    },
   },
 });
+
+export const selectStateData = (state) => state;
 
 export const store = configureStore({
   reducer: {
@@ -175,11 +194,13 @@ export const store = configureStore({
     getDefaultMiddleware().concat(jobhunterApiSlice.middleware),
 });
 
-export const { changeUser, changeIsEmployer,changeAuth } = stateSlice.actions;
+export const { changeUser, changeRole, changeAuth, changeLoggedIn } =
+  stateSlice.actions;
 
 export const {
   useGetUserQuery,
   useGetJobsQuery,
+  useGetJobQuery,
   useApplicant4JobsQuery,
   useJobs4ApplicantsQuery,
   useGetExperiencesQuery,
