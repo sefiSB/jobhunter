@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { changeAuth, changeLoggedIn, changeRole, useAuthenticateMutation } from "../../store/store";
+import { changeAuth, changeLoggedIn, changeRole, changeUser, useAuthenticateMutation } from "../../store/store";
 import { useDispatch } from "react-redux";
 
 function Login() {
@@ -19,6 +19,8 @@ function Login() {
       dispatch(changeAuth(result));
       dispatch(changeLoggedIn())
       dispatch(changeRole(result.user.role))
+      dispatch(changeUser(result.user.id))
+      console.log(result.user.id)
       setTimeout(()=>navigate('/'),1000)
     } catch (error) {
       console.error("Failed to authenticate: ", error);

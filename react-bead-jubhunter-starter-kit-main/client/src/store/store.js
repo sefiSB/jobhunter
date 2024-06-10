@@ -40,7 +40,7 @@ const jobhunterApiSlice = createApi({
       providesTags: [""],
     }),
     getExperiences: builder.query({
-      query: ({ id }) => `experiences/${id}`,
+      query: () => `experiences`,
       providesTags: ["experience"],
     }),
     addJob: builder.mutation({
