@@ -32,7 +32,7 @@ const jobhunterApiSlice = createApi({
       providesTags: ["job"],
     }),
     applicant4Jobs: builder.query({
-      query: ({ id }) => `applicants?jobId=${id}`,
+      query: ({ jobId }) => `applicants?jobId=${jobId}`,
       providesTags: [""],
     }),
     jobs4Applicants: builder.query({
@@ -44,8 +44,8 @@ const jobhunterApiSlice = createApi({
       providesTags: ["experience"],
     }),
     addJob: builder.mutation({
-      query: ({ data, id }) => ({
-        url: "users",
+      query: ({ data }) => ({
+        url: "jobs",
         method: "POST",
         body: {
           company: data.company,
@@ -61,7 +61,7 @@ const jobhunterApiSlice = createApi({
       invalidatesTags: ["job"],
     }),
     applyJob: builder.mutation({
-      query: ({ data, id }) => ({
+      query: ({ data }) => ({
         url: "applicants",
         method: "POST",
         body: {
@@ -124,7 +124,7 @@ const jobhunterApiSlice = createApi({
     }),
     modifyJob: builder.mutation({
       query: ({ data, id }) => ({
-        url: `experiences/${id}`,
+        url: `jobs/${id}`,
         method: "PATCH",
         body: {
           company: data.company,
@@ -147,9 +147,16 @@ const jobhunterApiSlice = createApi({
         })),
       invalidatesTags: ["experience"],
     }),
+    deleteJob: builder.mutation({
+      query: ({id}) => ({
+        url: `jobs/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["job"],
+    }),
     deleteJobs: builder.mutation({
       query: () => ({
-        url: "experiences",
+        url: "jobs",
         method: "DELETE",
       }),
       invalidatesTags: ["job"],
@@ -212,6 +219,7 @@ export const {
   useModifyExpMutation,
   useModifyJobMutation,
   useDeleteExpMutation,
+  useDeleteJobMutation,
   useDeleteJobsMutation,
   useDeleteApplyMutation,
 } = jobhunterApiSlice;

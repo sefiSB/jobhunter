@@ -1,7 +1,8 @@
-import { useGetJobsQuery, useGetUserQuery } from "../../store/store";
+import { useGetJobsQuery } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 function JobList() {
   const { data, error, isLoading } = useGetJobsQuery();
+  
   const navigate = useNavigate();
   return (
     <div className="joblist">

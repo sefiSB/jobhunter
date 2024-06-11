@@ -1,4 +1,41 @@
+import { useState } from "react";
+import { useAddJobMutation } from "../../store/store";
+import { useNavigate } from "react-router-dom";
 function NewJob() {
+  const [company, setCompany] = useState("");
+  const [position, setPosition] = useState("");
+  const [description, setDescription] = useState("");
+  const [salaryFrom, setSalaryFrom] = useState("");
+  const [salaryTo, setSalaryTo] = useState("");
+  const [type, setType] = useState("");
+  const [city, setCity] = useState("");
+  const [homeOffice, setHomeOffice] = useState(false);
+  const [addjob] = useAddJobMutation();
+  const navigate = useNavigate();
+
+  const handlePost = () => {
+    addjob({
+      data: {
+        company: company,
+        position: position,
+        description: description,
+        salaryFrom: parseInt(salaryFrom),
+        salaryTo: parseInt(salaryTo),
+        type: type,
+        city: city,
+        homeOffice: homeOffice,
+      },
+    })
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    setTimeout(() => {
+      navigate("/");
+    }, 200);
+  };
   return (
     <>
       <div className="container">
@@ -6,13 +43,14 @@ function NewJob() {
           <div className="row mb-3">
             <div className="col-md-6">
               <label htmlFor="company" className="form-label">
-                Comany
+                Company
               </label>
               <input
                 type="text"
                 className="form-control"
                 id="company"
                 placeholder=""
+                onChange={(e) => setCompany(e.target.value)}
               />
             </div>
             <div className="col-md-6">
@@ -24,6 +62,7 @@ function NewJob() {
                 className="form-control"
                 id="position"
                 placeholder=""
+                onChange={(e) => setPosition(e.target.value)}
               />
             </div>
           </div>
@@ -36,6 +75,7 @@ function NewJob() {
               name="description"
               id="description"
               rows="3"
+              onChange={(e) => setDescription(e.target.value)}
             ></textarea>
           </div>
           <div className="row mb-3">
@@ -48,6 +88,7 @@ function NewJob() {
                 className="form-control"
                 id="salaryfrom"
                 placeholder=""
+                onChange={(e) => setSalaryFrom(e.target.value)}
               />
             </div>
             <div className="col-md-6">
@@ -59,6 +100,7 @@ function NewJob() {
                 className="form-control"
                 id="salaryto"
                 placeholder=""
+                onChange={(e) => setSalaryTo(e.target.value)}
               />
             </div>
           </div>
@@ -72,6 +114,7 @@ function NewJob() {
                 className="form-control"
                 name="type"
                 id="type"
+                onChange={(e) => setType(e.target.value)}
               />
             </div>
             <div className="col-md-6">
@@ -83,6 +126,7 @@ function NewJob() {
                 className="form-control"
                 name="city"
                 id="city"
+                onChange={(e) => setCity(e.target.value)}
               />
             </div>
           </div>
@@ -93,6 +137,7 @@ function NewJob() {
               type="checkbox"
               value=""
               id="flexCheckDefault"
+              onChange={(e) => setHomeOffice(e.target.checked)}
             />
             <label className="form-check-label" htmlFor="flexCheckDefault">
               Home office
@@ -100,12 +145,14 @@ function NewJob() {
           </div>
 
           <div className="text-end">
-            <button type="button" className="btn btn-outline-secondary">
+            <button
+              type="button"
+              className="btn btn-outline-secondary"
+              onClick={handlePost}
+            >
               Add
             </button>
           </div>
-           
-          
         </form>
       </div>
     </>
