@@ -41,7 +41,7 @@ const jobhunterApiSlice = createApi({
     }),
     getExperiences: builder.query({
       query: () => `experiences`,
-      providesTags: ["experience"],
+      providesTags:['experience']
     }),
     addJob: builder.mutation({
       query: ({ data }) => ({
@@ -99,14 +99,14 @@ const jobhunterApiSlice = createApi({
       invalidatesTags: ["user"],
     }),
     addExperience: builder.mutation({
-      query: ({ dataList }) => ({
+      query: ({ data }) => ({
         url: "experiences",
         method: "POST",
-        body: dataList.map((data) => ({
+        body: {
           company: data.company,
           title: data.title,
           interval: data.interval,
-        })),
+        }
       }),
       invalidatesTags: ["experience"],
     }),

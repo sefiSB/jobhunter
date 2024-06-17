@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import "../../styles/myStyle.css";
 import { Link } from "react-router-dom";
-import { changeAuth, changeLoggedIn, changeRole, selectStateData } from "../../store/store";
+import { changeAuth, changeLoggedIn, changeRole, changeUser, selectStateData } from "../../store/store";
 
 function JobNav() {
   const stateData = useSelector((state)=>state.states);
@@ -9,7 +9,8 @@ function JobNav() {
 
   const handleLogOut=()=>{
     dispatch(changeRole(null))
-    dispatch(changeAuth(null))
+    dispatch(changeAuth({accessToken:null}))
+    dispatch(changeUser(null))
     dispatch(changeLoggedIn())
   }
   

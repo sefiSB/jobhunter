@@ -11,14 +11,25 @@ import "../../styles/myStyle.css";
 import { useSelector } from "react-redux";
 import ApplicantList from "../ApplicantList/ApplicantList";
 import { useNavigate } from "react-router-dom";
+import NewExperience from "../NewExperience/NewExperience";
 
 function Profile() {
   const states = useSelector((state) => state.states);
   const user = useGetUserQuery({ id: states.user });
   const experiences = useGetExperiencesQuery();
+  /* if(isLoading){
+    return(<><p>Loading...</p></>)
+  }
+  if(isError){
+    return(<><p>Something wont wreng</p></>)
+  } */
+  console.log(experiences);
   const jobs = useGetJobsQuery();
-  const navigate =useNavigate()
-  const [deleteJob]=useDeleteJobMutation()
+  const navigate = useNavigate();
+  const [deleteJob] = useDeleteJobMutation();
+
+  const [mutationType, setMutationType] = useState(null);
+  const [mutId, setMutId] = useState(null);
 
   const [company, setCompany] = useState("");
   const [position, setPosition] = useState("");
@@ -29,66 +40,78 @@ function Profile() {
   const [city, setCity] = useState("");
   const [homeOffice, setHomeOffice] = useState(false);
 
+  const [showAddExp, setShowAddExp] = useState(false);
+
   const [isModifyingKey, setIsModifyingKey] = useState(null);
-  const [showApplicants,setShowApplicants] = useState(null)
+  const [showApplicants, setShowApplicants] = useState(null);
   const [modifyJob] = useModifyJobMutation();
 
-  const handleDeleteJob = (id)=>{
-    deleteJob({id:id}).then((result)=>{
-      console.log(result)
-    }).catch((error)=>{
-      console.log(error)
-    })
-  }
-  
-  const handleApplicants = (id) =>{
-    setShowApplicants(id)
+  const handleModifyExp = (id) => {
+    setShowAddExp(true);
+    setMutationType("Modify");
+    setMutId(id);
     console.log(id)
-  }
-  const setItBack = ()=>{
-    setShowApplicants(null)
-  }
+  };
 
-  const handleModifyJob = (job,key) => {
-    if(isModifyingKey!==null){
-      setIsModifyingKey(null)  
-    }
-    else{
+  const handleAddExperience = () => {
+    setMutationType("Add")
+    setShowAddExp(!showAddExp);
+  };
+
+  const handleDeleteJob = (id) => {
+    deleteJob({ id: id })
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const handleApplicants = (id) => {
+    setShowApplicants(id);
+    console.log(id);
+  };
+  const setItBack = () => {
+    setShowApplicants(null);
+  };
+
+  const handleModifyJob = (job, key) => {
+    if (isModifyingKey !== null) {
+      setIsModifyingKey(null);
+    } else {
       setIsModifyingKey(key);
-    setCompany(job.company);
-    setPosition(job.position);
-    setDescription(job.description);
-    setSalaryFrom(job.salaryFrom);
-    setSalaryTo(job.salaryTo);
-    setType(job.type);
-    setCity(job.city);
+      setCompany(job.company);
+      setPosition(job.position);
+      setDescription(job.description);
+      setSalaryFrom(job.salaryFrom);
+      setSalaryTo(job.salaryTo);
+      setType(job.type);
+      setCity(job.city);
 
-    if(job.homeOffice===0){
-      setHomeOffice(false)
+      if (job.homeOffice === 0) {
+        setHomeOffice(false);
+      } else if (job.homeOffice === 1) {
+        setHomeOffice(true);
+      } else {
+        setHomeOffice(job.homeOffice);
+      }
     }
-    else if(job.homeOffice===1){
-      setHomeOffice(true)
-    }
-    else{
-      setHomeOffice(job.homeOffice);
-    }
-    }
-
   };
 
   const handleSendModifiedJob = (jobId) => {
-
     modifyJob({
       data: {
-        company:company,
-        position:position,
-        description:description,
-        salaryFrom:salaryFrom,
-        salaryTo:salaryTo,
-        type:type,
-        city:city,
-        homeOffice:homeOffice,
-      },id:jobId
+        company: company,
+        position: position,
+        description: description,
+        salaryFrom: salaryFrom,
+        salaryTo: salaryTo,
+        type: type,
+        city: city,
+        homeOffice: homeOffice,
+      },
+      id: jobId,
     })
       .then((result) => {
         console.log(result);
@@ -96,7 +119,7 @@ function Profile() {
       .catch((error) => {
         console.log(error);
       });
-      setIsModifyingKey(null)
+    setIsModifyingKey(null);
   };
 
   if (user.isLoading || experiences.isLoading || jobs.isLoading) {
@@ -109,7 +132,7 @@ function Profile() {
   return (
     <>
       <div className="profil">
-        <h1 className="chakra-petch-regular">Profilom</h1>
+        <h1 className="chakra-petch-regular">Profile</h1>
       </div>
 
       {states.role === "company" ? (
@@ -128,20 +151,26 @@ function Profile() {
                       <div className="col text-end p-1">
                         <button
                           className="btn btn-outline-primary text-end m-2"
-                          onClick={() => handleModifyJob(elem,i)}
+                          onClick={() => handleModifyJob(elem, i)}
                         >
                           Szerkesztés
                         </button>
-                        <button className="btn btn-outline-primary text-end m-2" onClick={()=>handleApplicants(elem.id)}>
+                        <button
+                          className="btn btn-outline-primary text-end m-2"
+                          onClick={() => handleApplicants(elem.id)}
+                        >
                           Applicants
                         </button>
-                        <button className="btn btn-danger text-end m-2" onClick={()=>handleDeleteJob(elem.id)}>
+                        <button
+                          className="btn btn-danger text-end m-2"
+                          onClick={() => handleDeleteJob(elem.id)}
+                        >
                           Delete
                         </button>
                       </div>
                     </div>
                   </div>
-                  {isModifyingKey===i && (
+                  {isModifyingKey === i && (
                     <div className="container">
                       <form className="">
                         <div className="row mb-3">
@@ -255,41 +284,45 @@ function Profile() {
                           <button
                             type="button"
                             className="btn btn-outline-secondary"
-                            onClick={()=>handleSendModifiedJob(elem.id)}
+                            onClick={() => handleSendModifiedJob(elem.id)}
                           >
                             Modify
                           </button>
                         </div>
                       </form>
                     </div>
-                    
                   )}
-                  <div hidden={showApplicants===null}>
-                  <ApplicantList jobId={showApplicants} setNull={setItBack}/>
+                  <div hidden={showApplicants === null}>
+                    <ApplicantList jobId={showApplicants} setNull={setItBack} />
                   </div>
                 </div>
-                
               );
             }
-            
+
             return null;
           })}
           <div className="text-center mt-5">
-            <button onClick={()=>setTimeout(() => {
-              navigate("/newjob")
-            }, 0)}>Add job</button>
+            <button
+              onClick={() =>
+                setTimeout(() => {
+                  navigate("/newjob");
+                }, 0)
+              }
+            >
+              Add job
+            </button>
           </div>
         </>
       ) : (
         <div className="container mt-5">
           <div className="row">
             <div className="col">
-              <h3>Személyes adatok</h3>
+              <h3>Personal data</h3>
             </div>
             <table className="table table-striped mt-5">
               <tbody>
                 <tr>
-                  <td className="chakra-petch-regular text-secondary">Név</td>
+                  <td className="chakra-petch-regular text-secondary">Name</td>
                   <td>{user.data.fullname}</td>
                 </tr>
                 <tr>
@@ -314,15 +347,43 @@ function Profile() {
                   experiences.data.data.map((elem) => (
                     <tr key={elem.id}>
                       <td className="chakra-petch-regular text-secondary">
-                        {elem.data.company}
+                        {elem.company}
                       </td>
-                      <td>{elem.data.position}</td>
+                      <td>{elem.title}
+                      
+                      <button
+                          className="btn btn-outline-primary ms-5"
+                          onClick={() => handleModifyExp(elem.id)}
+                        >
+                          Modify
+                        </button>
+                      
+                      </td>
+                      {/* <td>
+                        
+                      </td> */}
                     </tr>
                   ))
                 )}
               </tbody>
             </table>
           </div>
+          <button
+            type="button"
+            className="btn btn-outline-secondary"
+            onClick={handleAddExperience}
+          >
+            Add experience
+          </button>
+          {showAddExp ? (
+            <NewExperience
+              id={mutId}
+              isModification={mutationType}
+              closeAdd={() => setShowAddExp(false)}
+            />
+          ) : (
+            <></>
+          )}
         </div>
       )}
     </>
