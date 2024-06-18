@@ -29,7 +29,6 @@ function JobDetails() {
 
   const job = useGetJobQuery({ id: params });
   
- */
   if (job.isLoading) {
     return <>Loading...</>;
   }
