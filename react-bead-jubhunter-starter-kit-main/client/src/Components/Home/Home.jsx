@@ -13,7 +13,7 @@ function Home() {
   const from2 = document.querySelector('#from')
   
   const clear = () =>{
-    console.log("as")
+    
     setFrom("")
     setTo("")
     setType("")

@@ -1,8 +1,25 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAddUserMutation } from "../../store/store";
+import {
+  useAddExperienceMutation,
+  useAddUserMutation,
+  useAuthenticateMutation,
+} from "../../store/store";
+import { useDispatch } from "react-redux";
+import {
+  changeLoggedIn,
+  changeAuth,
+  changeRole,
+  changeUser,
+} from "../../store/store";
+
+
 
 function Register() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate()
+  const [addExp] = useAddExperienceMutation();
+  const [auth] = useAuthenticateMutation();
   const [addUser] = useAddUserMutation();
   const [role, setRole] = useState("company");
   const [email, setEmail] = useState("");
@@ -14,21 +31,66 @@ function Register() {
     setRole(e.target.value);
   };
 
-  const handleAuth = (e) => {
-    e.preventDefault()
-    addUser({
+  const handleAuth = async (e) => {
+    e.preventDefault();
+    const res = await addUser({
       data: {
         email: email,
         password: password,
         fullname: fullname,
         role: role,
       },
-    }).then((result)=>{
-      console.log(result)
-    }).catch((error)=>{
-      console.log(error)
-    })
+    });
+
+    if (res.error) {
+      console.error(res.error);
+      return;
+    }
+    console.log(res);
     
+    /* .then((result) => {
+        console.log(result);
+        dispatch(changeAuth(result));
+        dispatch(changeLoggedIn());
+        dispatch(changeRole(role));
+        dispatch(changeUser(result.id));
+      })
+      .catch((error) => {
+        console.log(error);
+      }); */
+
+    const a = await auth({
+      data: {
+        email: email,
+        password: password,
+        strategy: "local",
+      },
+    });
+    console.log(a.data)
+    if(a.error){
+      console.error(a.error)
+      return
+    }
+    dispatch(changeAuth({accessToken:a.data.accessToken}));
+    dispatch(changeLoggedIn());
+    dispatch(changeRole(res.data.role));
+    dispatch(changeUser(res.data.id));
+
+    let rows = experiences.split("\n");
+    rows.map((e) => {
+      const arr = e.split(";");
+      addExp({
+        data: {
+          company: arr[0],
+          title: arr[1],
+          interval: arr[2],
+        },
+        token:a.data.accessToken
+      })
+        .then((result) => console.log(result))
+        .catch((error) => console.log(error));
+    });
+    setTimeout(()=>navigate("/"),1000)
   };
 
   return (
@@ -138,7 +200,7 @@ function Register() {
               <button
                 type="submit"
                 className="btn btn-primary"
-                onClick={(e)=>handleAuth(e)}
+                onClick={(e) => handleAuth(e)}
               >
                 Sign up
               </button>

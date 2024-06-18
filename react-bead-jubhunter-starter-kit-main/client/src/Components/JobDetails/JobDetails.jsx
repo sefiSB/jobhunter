@@ -4,31 +4,31 @@ import {
   useApplyJobMutation,
   useGetJobQuery,
 } from "../../store/store";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
 
 function JobDetails() {
+  const navigate = useNavigate()
   const states = useSelector((state) => state.states);
   const params = useParams()["*"];
   const [apply,{isError,isLoading}] = useApplyJobMutation();
   const [success,setSuccess] = useState("");
-  console.log(apply)
+  
 
-  const handleApplication = () => {
-    apply({ data: { jobId: parseInt(params) } })
-      .then((result) => {
-        console.log(result);
-        setSuccess("Jelentkezés sikeres")
-      })
-      .catch((error) => {
-        console.log(error);
-        setSuccess("Jelentkezés sikertelen")
-      });
+  const handleApplication = async () => {
+    const res =  await apply({ data: { jobId: parseInt(params) } })
+    if(res.error){
+      setSuccess("Jelentkezés sikertelen")
+      setTimeout(()=>navigate('/'),1000)
+      
+      return  
+    }
+    setSuccess("Jelentkezés sikeres")
+    setTimeout(()=>navigate('/'),1000)
   };
 
   const job = useGetJobQuery({ id: params });
-  /* const applicants = useApplicant4JobsQuery({ id: params });
-  console.log(applicants);
+  
  */
   if (job.isLoading) {
     return <>Loading...</>;
@@ -146,7 +146,7 @@ function JobDetails() {
                 </tbody>
               </table>
             </div>
-            <p className="text-success"></p>
+            <p className={success==="Jelentkezés sikeres"?"text-success":"text-danger"}>{success}</p>
           </div>
         </>
       ) : (

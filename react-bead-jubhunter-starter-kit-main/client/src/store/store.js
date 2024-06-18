@@ -99,15 +99,21 @@ const jobhunterApiSlice = createApi({
       invalidatesTags: ["user"],
     }),
     addExperience: builder.mutation({
-      query: ({ data }) => ({
+      query: ({ data,token }) => {
+        console.log(token)
+        return (
+        {
         url: "experiences",
         method: "POST",
+        /* headers:{
+          Authorization: token,
+        }, */
         body: {
           company: data.company,
           title: data.title,
           interval: data.interval,
         }
-      }),
+      })},
       invalidatesTags: ["experience"],
     }),
     modifyExp: builder.mutation({

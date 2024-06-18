@@ -12,7 +12,7 @@ import JobDetails from "./Components/JobDetails/JobDetails";
 
 function App() {
   /* const { jobhubnterApi, states } = useSelector(selectStateData);
-  console.log(states); */
+  
 
   
   return (

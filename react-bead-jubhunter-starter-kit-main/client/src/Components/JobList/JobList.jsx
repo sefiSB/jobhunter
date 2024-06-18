@@ -9,7 +9,6 @@ function JobList({ from, to, type, city, homeoffice, search }) {
 
     if (search !== "") {
       if (!pname.match(searchReg)) {
-        console.log(pname.match(searchReg))
         return false;
       }
     }

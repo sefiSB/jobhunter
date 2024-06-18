@@ -15,12 +15,12 @@ function Login() {
   const handleAuth= async() =>{
     try {
       const result = await authenticate({data:{ email:email, password:password, strategy: "local" }}).unwrap();
-      console.log(result)
+      
       dispatch(changeAuth(result));
       dispatch(changeLoggedIn())
       dispatch(changeRole(result.user.role))
       dispatch(changeUser(result.user.id))
-      console.log(result.user.id)
+      
       setTimeout(()=>navigate('/'),1000)
     } catch (error) {
       console.error("Failed to authenticate: ", error);

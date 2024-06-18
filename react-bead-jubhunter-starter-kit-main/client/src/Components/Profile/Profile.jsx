@@ -292,9 +292,13 @@ function Profile() {
                       </form>
                     </div>
                   )}
-                  <div hidden={showApplicants === null}>
-                    <ApplicantList jobId={showApplicants} setNull={setItBack} />
-                  </div>
+                  {
+                    showApplicants===elem.id?
+                    <ApplicantList id={showApplicants} setNull={setItBack} />
+                    :
+                    <></>
+                  }
+                  
                 </div>
               );
             }
